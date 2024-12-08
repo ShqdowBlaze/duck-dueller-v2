@@ -52,6 +52,25 @@ class Classic : BotBase("/play duels_classic_duel"), Bow, Rod, MovePriority {
 
     var tapping = false
 
+    suspend fun smoothLookAt(targetYaw: Double, targetPitch: Double) {
+    var currentYaw = getCurrentYaw()
+    var currentPitch = getCurrentPitch()
+
+    while (kotlin.math.abs(currentYaw - targetYaw) > 0.5 || kotlin.math.abs(currentPitch - targetPitch) > 0.5) {
+        currentYaw += (targetYaw - currentYaw) * 0.2
+        currentPitch += (targetPitch - currentPitch) * 0.2
+        setCameraAngles(currentYaw, currentPitch)
+        delay(20) // Small delay to simulate smooth motion
+    }
+}
+
+    suspend fun playClassicDuels() {
+    while (inDuel) {
+        performRandomMovement()
+        attackWithDelay()
+    }
+}
+
     override fun onAttack() {
         val distance = EntityUtils.getDistanceNoY(mc.thePlayer, opponent())
         if (distance < 3) {
